@@ -1,0 +1,136 @@
+// Google Apps Script to handle baseball team signup data
+
+function doGet(e) {
+  // This handles GET requests - for retrieving signup data
+  return handleRequest(e);
+}
+
+function doPost(e) {
+  // This handles POST requests - for adding new signups
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000); // Wait 10 seconds for other processes to complete
+  
+  try {
+    var operation = e.parameter.operation;
+    
+    if (operation == "getSignups") {
+      // Return all signups
+      return getSignups();
+    } else if (operation == "addSignup") {
+      // Add a new signup
+      return addSignup(e.parameter.gameId, e.parameter.playerName, e.parameter.position);
+    } else if (operation == "removeSignup") {
+      // Remove a signup
+      return removeSignup(e.parameter.gameId, e.parameter.playerName);
+    } else {
+      // Invalid operation
+      return ContentService.createTextOutput(JSON.stringify({
+        'success': false,
+        'message': 'Invalid operation'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (error) {
+    // Handle errors
+    return ContentService.createTextOutput(JSON.stringify({
+      'success': false,
+      'message': error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getSignups() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  
+  // Convert to JSON
+  var signups = {};
+  
+  // Skip header row
+  for (var i = 1; i < data.length; i++) {
+    var gameId = data[i][0];
+    var playerName = data[i][1];
+    var position = data[i][2];
+    
+    // Initialize array for this game if it doesn't exist
+    if (!signups[gameId]) {
+      signups[gameId] = [];
+    }
+    
+    // Add player to the game's signup list
+    signups[gameId].push({
+      name: playerName,
+      position: position
+    });
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    'success': true,
+    'data': signups
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function addSignup(gameId, playerName, position) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  
+  // Check if player is already signed up for this game
+  var playerExists = false;
+  var rowToUpdate = -1;
+  
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] == gameId && data[i][1] == playerName) {
+      playerExists = true;
+      rowToUpdate = i + 1; // +1 because sheet rows are 1-indexed
+      break;
+    }
+  }
+  
+  if (playerExists) {
+    // Update existing signup
+    sheet.getRange(rowToUpdate, 3).setValue(position); // Update position
+    sheet.getRange(rowToUpdate, 4).setValue(new Date()); // Update timestamp
+  } else {
+    // Add new signup
+    sheet.appendRow([gameId, playerName, position, new Date()]);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    'success': true,
+    'message': playerExists ? 'Signup updated' : 'Signup added'
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function removeSignup(gameId, playerName) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  
+  // Find player signup
+  var rowToDelete = -1;
+  
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] == gameId && data[i][1] == playerName) {
+      rowToDelete = i + 1; // +1 because sheet rows are 1-indexed
+      break;
+    }
+  }
+  
+  if (rowToDelete > 0) {
+    // Delete signup
+    sheet.deleteRow(rowToDelete);
+    return ContentService.createTextOutput(JSON.stringify({
+      'success': true,
+      'message': 'Signup removed'
+    })).setMimeType(ContentService.MimeType.JSON);
+  } else {
+    return ContentService.createTextOutput(JSON.stringify({
+      'success': false,
+      'message': 'Signup not found'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
