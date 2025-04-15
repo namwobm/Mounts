@@ -9,51 +9,123 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 1000px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
             background-color: #f5f5f5;
         }
         header {
             background-color: #1a3a6e;
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         h1 {
             margin: 0;
+            font-size: 1.6rem;
         }
         .month-section {
             background-color: white;
             border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .month-header {
             background-color: #1a3a6e;
             color: white;
-            padding: 10px;
+            padding: 8px;
             border-radius: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+        .month-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         th, td {
-            padding: 12px 15px;
+            padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
         th {
             background-color: #f2f2f2;
         }
-        tr:hover {
-            background-color: #f9f9f9;
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            .desktop-only {
+                display: none;
+            }
+            
+            /* Convert table to cards on mobile */
+            table, thead, tbody, th, td, tr { 
+                display: block; 
+            }
+            
+            thead tr { 
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 15px;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            
+            td { 
+                border: none;
+                position: relative;
+                padding-left: 40%; 
+                text-align: right;
+            }
+            
+            td:before { 
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                width: 35%; 
+                padding-right: 10px; 
+                white-space: nowrap;
+                font-weight: bold;
+                text-align: left;
+            }
+            
+            /* Add data labels */
+            td:nth-of-type(1):before { content: "Day"; }
+            td:nth-of-type(2):before { content: "Date"; }
+            td:nth-of-type(3):before { content: "Team"; }
+            td:nth-of-type(4):before { content: "Diamond"; }
+            td:nth-of-type(5):before { content: "Players"; text-align: center; left: 0; width: 100%; position: relative; display: block; margin-bottom: 5px; }
+            td:nth-of-type(6):before { content: "Action"; text-align: center; left: 0; width: 100%; position: relative; display: block; margin-bottom: 5px; }
+            
+            td:nth-of-type(5) { 
+                text-align: center;
+                padding-left: 8px;
+            }
+            td:nth-of-type(6) { 
+                text-align: center;
+                padding-left: 8px;
+            }
+            
+            .player-list-section {
+                margin-left: 0;
+                padding-left: 0;
+            }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
         }
         .sign-up-btn {
             background-color: #4CAF50;
@@ -63,12 +135,26 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
+            flex: 1;
         }
         .sign-up-btn:hover {
             background-color: #45a049;
         }
-        .remove-btn {
+        .cant-attend-btn {
             background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 1;
+        }
+        .cant-attend-btn:hover {
+            background-color: #d32f2f;
+        }
+        .remove-btn {
+            background-color: #777;
             color: white;
             border: none;
             padding: 2px 6px;
@@ -78,16 +164,40 @@
             margin-left: 8px;
         }
         .remove-btn:hover {
-            background-color: #d32f2f;
+            background-color: #555;
+        }
+        .player-list-section {
+            margin-top: 5px;
+        }
+        .player-list-heading {
+            font-weight: bold;
+            margin-bottom: 3px;
+            padding-left: 5px;
         }
         .player-list {
-            margin-top: 10px;
-            padding-left: 20px;
+            margin-top: 3px;
+            padding-left: 5px;
+        }
+        .attending-heading {
+            color: #4CAF50;
+        }
+        .not-attending-heading {
+            color: #f44336;
         }
         .player {
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .player-attending {
+            border-left: 3px solid #4CAF50;
+            padding-left: 5px;
+        }
+        .player-not-attending {
+            border-left: 3px solid #f44336;
+            padding-left: 5px;
         }
         #signup-modal {
             display: none;
@@ -101,10 +211,11 @@
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 300px;
+            width: 90%;
+            max-width: 350px;
             border-radius: 5px;
         }
         .close {
@@ -126,9 +237,43 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+        .attendance-options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .attendance-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .attendance-option.selected {
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        .attendance-yes {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+        .attendance-yes.selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .attendance-no {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+        }
+        .attendance-no.selected {
+            background-color: #f44336;
+            color: white;
+        }
         .submit-btn {
             width: 100%;
-            background-color: #4CAF50;
+            background-color: #1a3a6e;
             color: white;
             padding: 10px 15px;
             margin: 8px 0;
@@ -137,7 +282,7 @@
             cursor: pointer;
         }
         .submit-btn:hover {
-            background-color: #45a049;
+            background-color: #142f58;
         }
         #loading-overlay {
             display: none;
@@ -172,6 +317,7 @@
             border-radius: 5px;
             display: none;
             z-index: 3;
+            max-width: 80%;
         }
         .status-success {
             background-color: #4CAF50;
@@ -181,16 +327,38 @@
             background-color: #f44336;
             color: white;
         }
-        .team-name {
-            font-size: 14px;
-            padding: 3px 10px;
-            margin-left: 10px;
-            border-radius: 10px;
-            display: inline-block;
-        }
         .player-count {
             font-weight: bold;
             color: #1a3a6e;
+            margin-bottom: 5px;
+        }
+        
+        /* Improve mobile tap sizes */
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .sign-up-btn, .cant-attend-btn, .submit-btn {
+                padding: 12px;
+                margin-bottom: 5px;
+                font-size: 16px;
+            }
+            
+            .remove-btn {
+                padding: 5px 10px;
+                font-size: 14px;
+            }
+            
+            .player {
+                padding: 5px 0;
+            }
+            
+            input[type=text], select {
+                padding: 12px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -206,7 +374,7 @@
 
     <header>
         <h1>Team Game Sign-up</h1>
-        <p>Sign up for upcoming games to confirm your attendance</p>
+        <p>Confirm your attendance for upcoming games</p>
     </header>
 
     <div class="month-section">
@@ -231,9 +399,14 @@
                     <td>Lock Monsters</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-may-13"></div>
+                        <div class="player-list-section" id="player-section-may-13"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('may-13', 'Lock Monsters')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('may-13', 'Lock Monsters', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('may-13', 'Lock Monsters', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Tue</td>
@@ -241,9 +414,14 @@
                     <td>Board X</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-may-20"></div>
+                        <div class="player-list-section" id="player-section-may-20"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('may-20', 'Board X')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('may-20', 'Board X', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('may-20', 'Board X', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Tue</td>
@@ -251,9 +429,14 @@
                     <td>Sparx</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-may-27"></div>
+                        <div class="player-list-section" id="player-section-may-27"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('may-27', 'Sparx')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('may-27', 'Sparx', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('may-27', 'Sparx', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -281,9 +464,14 @@
                     <td>Pine Riders</td>
                     <td>2</td>
                     <td>
-                        <div class="player-list" id="players-june-4"></div>
+                        <div class="player-list-section" id="player-section-june-4"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('june-4', 'Pine Riders')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('june-4', 'Pine Riders', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('june-4', 'Pine Riders', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Wed</td>
@@ -291,9 +479,14 @@
                     <td>BTG</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-june-11"></div>
+                        <div class="player-list-section" id="player-section-june-11"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('june-11', 'BTG')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('june-11', 'BTG', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('june-11', 'BTG', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Wed</td>
@@ -301,9 +494,14 @@
                     <td>Villians</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-june-18"></div>
+                        <div class="player-list-section" id="player-section-june-18"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('june-18', 'Villians')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('june-18', 'Villians', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('june-18', 'Villians', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Tue</td>
@@ -311,7 +509,7 @@
                     <td>BYE</td>
                     <td>-</td>
                     <td>
-                        <div class="player-list" id="players-june-24"></div>
+                        <div class="player-list-section" id="player-section-june-24"></div>
                     </td>
                     <td><button class="sign-up-btn" disabled>No Game</button></td>
                 </tr>
@@ -341,9 +539,14 @@
                     <td>Lock Monsters</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-july-1"></div>
+                        <div class="player-list-section" id="player-section-july-1"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('july-1', 'Lock Monsters')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('july-1', 'Lock Monsters', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-1', 'Lock Monsters', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Tue</td>
@@ -351,9 +554,14 @@
                     <td>Board X</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-july-8"></div>
+                        <div class="player-list-section" id="player-section-july-8"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('july-8', 'Board X')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('july-8', 'Board X', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-8', 'Board X', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Tue</td>
@@ -361,9 +569,14 @@
                     <td>Sparx</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-july-15"></div>
+                        <div class="player-list-section" id="player-section-july-15"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('july-15', 'Sparx')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('july-15', 'Sparx', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-15', 'Sparx', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Wed</td>
@@ -371,9 +584,14 @@
                     <td>Pine Riders</td>
                     <td>2</td>
                     <td>
-                        <div class="player-list" id="players-july-23"></div>
+                        <div class="player-list-section" id="player-section-july-23"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('july-23', 'Pine Riders')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('july-23', 'Pine Riders', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-23', 'Pine Riders', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Wed</td>
@@ -381,9 +599,14 @@
                     <td>BTG</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-july-30"></div>
+                        <div class="player-list-section" id="player-section-july-30"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('july-30', 'BTG')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('july-30', 'BTG', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-30', 'BTG', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -411,9 +634,14 @@
                     <td>Villians</td>
                     <td>1</td>
                     <td>
-                        <div class="player-list" id="players-august-6"></div>
+                        <div class="player-list-section" id="player-section-august-6"></div>
                     </td>
-                    <td><button class="sign-up-btn" onclick="openSignup('august-6', 'Villians')">Sign Up</button></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="sign-up-btn" onclick="openSignup('august-6', 'Villians', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('august-6', 'Villians', false)">Can't Attend</button>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Wed</td>
@@ -421,7 +649,7 @@
                     <td>BYE</td>
                     <td>-</td>
                     <td>
-                        <div class="player-list" id="players-august-13"></div>
+                        <div class="player-list-section" id="player-section-august-13"></div>
                     </td>
                     <td><button class="sign-up-btn" disabled>No Game</button></td>
                 </tr>
@@ -433,28 +661,33 @@
     <div id="signup-modal">
         <div class="modal-content">
             <span class="close" onclick="closeSignup()">&times;</span>
-            <h3>Sign Up for Game</h3>
+            <h3 id="signup-modal-title">Sign Up for Game</h3>
             <p id="game-details">Game details here</p>
+            
             <form id="signup-form">
                 <input type="hidden" id="game-id" name="game-id">
+                <input type="hidden" id="attendance-status" name="attendance-status" value="true">
+                
                 <label for="player-name">Name:</label>
                 <input type="text" id="player-name" name="player-name" placeholder="Your name" required>
                 
-                <label for="player-position">Position:</label>
-                <select id="player-position" name="player-position">
-                    <option value="Pitcher">Pitcher</option>
-                    <option value="Catcher">Catcher</option>
-                    <option value="First Base">First Base</option>
-                    <option value="Second Base">Second Base</option>
-                    <option value="Third Base">Third Base</option>
-                    <option value="Shortstop">Shortstop</option>
-                    <option value="Left Field">Left Field</option>
-                    <option value="Center Field">Center Field</option>
-                    <option value="Right Field">Right Field</option>
-                    <option value="Utility">Utility</option>
-                </select>
+                <div id="position-section">
+                    <label for="player-position">Position:</label>
+                    <select id="player-position" name="player-position">
+                        <option value="Pitcher">Pitcher</option>
+                        <option value="Catcher">Catcher</option>
+                        <option value="First Base">First Base</option>
+                        <option value="Second Base">Second Base</option>
+                        <option value="Third Base">Third Base</option>
+                        <option value="Shortstop">Shortstop</option>
+                        <option value="Left Field">Left Field</option>
+                        <option value="Center Field">Center Field</option>
+                        <option value="Right Field">Right Field</option>
+                        <option value="Utility">Utility</option>
+                    </select>
+                </div>
 
-                <button type="button" class="submit-btn" onclick="submitSignup()">Sign Up</button>
+                <button type="button" class="submit-btn" onclick="submitSignup()">Submit</button>
             </form>
         </div>
     </div>
@@ -467,6 +700,7 @@
         
         let currentGameId = '';
         let currentPlayerName = '';
+        let currentAttendance = true;
         
         // Show loading overlay
         function showLoading() {
@@ -514,122 +748,79 @@
         
         // Populate player lists with data from Google Sheets
         function populatePlayerLists(playerData) {
-            // Clear existing player lists
-            const playerLists = document.querySelectorAll('.player-list');
-            playerLists.forEach(list => {
-                list.innerHTML = '';
-            });
+            // Group players by gameId and attendance status
+            const groupedPlayers = {};
             
-            // Populate with new data
             for (const gameId in playerData) {
-                const playerList = document.getElementById(`players-${gameId}`);
-                if (playerList) {
-                    // Show player count
+                groupedPlayers[gameId] = {
+                    attending: [],
+                    notAttending: []
+                };
+                
+                playerData[gameId].forEach(player => {
+                    if (player.attendance === "false") {
+                        groupedPlayers[gameId].notAttending.push(player);
+                    } else {
+                        groupedPlayers[gameId].attending.push(player);
+                    }
+                });
+            }
+            
+            // Update the DOM with grouped players
+            for (const gameId in groupedPlayers) {
+                const sectionEl = document.getElementById(`player-section-${gameId}`);
+                if (sectionEl) {
+                    sectionEl.innerHTML = ''; // Clear existing content
+                    
+                    // Add attending count
+                    const attendingCount = groupedPlayers[gameId].attending.length;
+                    const notAttendingCount = groupedPlayers[gameId].notAttending.length;
+                    
                     const countEl = document.createElement('div');
                     countEl.className = 'player-count';
-                    countEl.textContent = `Players: ${playerData[gameId].length}`;
-                    playerList.appendChild(countEl);
+                    countEl.textContent = `${attendingCount} attending, ${notAttendingCount} not attending`;
+                    sectionEl.appendChild(countEl);
                     
-                    // Add each player
-                    playerData[gameId].forEach(player => {
-                        const playerEl = document.createElement('div');
-                        playerEl.className = 'player';
+                    // Add attending players
+                    if (attendingCount > 0) {
+                        const attendingHeading = document.createElement('div');
+                        attendingHeading.className = 'player-list-heading attending-heading';
+                        attendingHeading.textContent = 'Attending:';
+                        sectionEl.appendChild(attendingHeading);
                         
-                        const nameEl = document.createElement('span');
-                        nameEl.textContent = `${player.name} (${player.position})`;
-                        playerEl.appendChild(nameEl);
+                        const attendingList = document.createElement('div');
+                        attendingList.className = 'player-list';
                         
-                        // Add remove button
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'remove-btn';
-                        removeBtn.textContent = 'X';
-                        removeBtn.onclick = () => removeSignup(gameId, player.name);
-                        playerEl.appendChild(removeBtn);
+                        groupedPlayers[gameId].attending.forEach(player => {
+                            const playerEl = document.createElement('div');
+                            playerEl.className = 'player player-attending';
+                            
+                            const nameEl = document.createElement('span');
+                            nameEl.textContent = `${player.name} (${player.position})`;
+                            playerEl.appendChild(nameEl);
+                            
+                            // Add remove button
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-btn';
+                            removeBtn.textContent = 'X';
+                            removeBtn.onclick = () => removeSignup(gameId, player.name);
+                            playerEl.appendChild(removeBtn);
+                            
+                            attendingList.appendChild(playerEl);
+                        });
                         
-                        playerList.appendChild(playerEl);
-                    });
-                }
-            }
-        }
-        
-        // Open signup modal
-        function openSignup(gameId, opponent) {
-            document.getElementById('signup-modal').style.display = 'block';
-            document.getElementById('game-details').textContent = `vs ${opponent}`;
-            document.getElementById('game-id').value = gameId;
-            currentGameId = gameId;
-            
-            // Focus on name field
-            setTimeout(() => {
-                document.getElementById('player-name').focus();
-            }, 100);
-        }
-        
-        // Close signup modal
-        function closeSignup() {
-            document.getElementById('signup-modal').style.display = 'none';
-            document.getElementById('signup-form').reset();
-        }
-        
-        // Submit signup to Google Sheets
-        function submitSignup() {
-            const playerName = document.getElementById('player-name').value;
-            const playerPosition = document.getElementById('player-position').value;
-            const gameId = document.getElementById('game-id').value;
-            
-            if (!playerName) {
-                alert('Please enter your name');
-                return;
-            }
-            
-            currentPlayerName = playerName;
-            
-            showLoading();
-            closeSignup();
-            
-            // Send data to Google Apps Script
-            fetch(`${SCRIPT_URL}?operation=addSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}&position=${encodeURIComponent(playerPosition)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        loadSignups(); // Reload all signups
-                        showStatus('Successfully signed up!', true);
-                    } else {
-                        throw new Error(data.message || 'Failed to sign up');
+                        sectionEl.appendChild(attendingList);
                     }
-                })
-                .catch(error => {
-                    hideLoading();
-                    showStatus(`Error: ${error.message}`, false);
-                    console.error('Error submitting signup:', error);
-                });
-        }
-        
-        // Remove signup
-        function removeSignup(gameId, playerName) {
-            if (confirm(`Remove ${playerName} from this game?`)) {
-                showLoading();
-                
-                fetch(`${SCRIPT_URL}?operation=removeSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            loadSignups(); // Reload all signups
-                            showStatus('Successfully removed signup', true);
-                        } else {
-                            throw new Error(data.message || 'Failed to remove signup');
-                        }
-                    })
-                    .catch(error => {
-                        hideLoading();
-                        showStatus(`Error: ${error.message}`, false);
-                        console.error('Error removing signup:', error);
-                    });
-            }
-        }
-        
-        // Initialize - load signups when page loads
-        document.addEventListener('DOMContentLoaded', loadSignups);
-    </script>
-</body>
-</html>
+                    
+                    // Add not attending players
+                    if (notAttendingCount > 0) {
+                        const notAttendingHeading = document.createElement('div');
+                        notAttendingHeading.className = 'player-list-heading not-attending-heading';
+                        notAttendingHeading.textContent = 'Not Attending:';
+                        sectionEl.appendChild(notAttendingHeading);
+                        
+                        const notAttendingList = document.createElement('div');
+                        notAttendingList.className = 'player-list';
+                        
+                        groupedPlayers[gameId].notAttending.forEach(player => {
+                            const playerEl = document.createElement('
