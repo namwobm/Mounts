@@ -1,136 +1,635 @@
-// Google Apps Script to handle baseball team signup data
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baseball Team Game Sign-up</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #1a3a6e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+        }
+        .month-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .month-header {
+            background-color: #1a3a6e;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .sign-up-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .sign-up-btn:hover {
+            background-color: #45a049;
+        }
+        .remove-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .remove-btn:hover {
+            background-color: #d32f2f;
+        }
+        .player-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .player {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        #signup-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        input[type=text], select {
+            width: 100%;
+            padding: 8px 12px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            text-align: center;
+            padding-top: 30%;
+        }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            z-index: 3;
+        }
+        .status-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-error {
+            background-color: #f44336;
+            color: white;
+        }
+        .team-name {
+            font-size: 14px;
+            padding: 3px 10px;
+            margin-left: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .player-count {
+            font-weight: bold;
+            color: #1a3a6e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
 
-function doGet(e) {
-  // This handles GET requests - for retrieving signup data
-  return handleRequest(e);
-}
+    <!-- Status message -->
+    <div id="status-message" class="status-message"></div>
 
-function doPost(e) {
-  // This handles POST requests - for adding new signups
-  return handleRequest(e);
-}
+    <header>
+        <h1>Team Game Sign-up</h1>
+        <p>Sign up for upcoming games to confirm your attendance</p>
+    </header>
 
-function handleRequest(e) {
-  var lock = LockService.getScriptLock();
-  lock.tryLock(10000); // Wait 10 seconds for other processes to complete
-  
-  try {
-    var operation = e.parameter.operation;
-    
-    if (operation == "getSignups") {
-      // Return all signups
-      return getSignups();
-    } else if (operation == "addSignup") {
-      // Add a new signup
-      return addSignup(e.parameter.gameId, e.parameter.playerName, e.parameter.position);
-    } else if (operation == "removeSignup") {
-      // Remove a signup
-      return removeSignup(e.parameter.gameId, e.parameter.playerName);
-    } else {
-      // Invalid operation
-      return ContentService.createTextOutput(JSON.stringify({
-        'success': false,
-        'message': 'Invalid operation'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-  } catch (error) {
-    // Handle errors
-    return ContentService.createTextOutput(JSON.stringify({
-      'success': false,
-      'message': error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
+    <div class="month-section">
+        <div class="month-header">
+            <h2>May 2025</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Date</th>
+                    <th>Team</th>
+                    <th>Diamond</th>
+                    <th>Players</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tue</td>
+                    <td>May 13</td>
+                    <td>Lock Monsters</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-may-13"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('may-13', 'Lock Monsters')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td>May 20</td>
+                    <td>Board X</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-may-20"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('may-20', 'Board X')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td>May 27</td>
+                    <td>Sparx</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-may-27"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('may-27', 'Sparx')">Sign Up</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-function getSignups() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  
-  // Convert to JSON
-  var signups = {};
-  
-  // Skip header row
-  for (var i = 1; i < data.length; i++) {
-    var gameId = data[i][0];
-    var playerName = data[i][1];
-    var position = data[i][2];
-    
-    // Initialize array for this game if it doesn't exist
-    if (!signups[gameId]) {
-      signups[gameId] = [];
-    }
-    
-    // Add player to the game's signup list
-    signups[gameId].push({
-      name: playerName,
-      position: position
-    });
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({
-    'success': true,
-    'data': signups
-  })).setMimeType(ContentService.MimeType.JSON);
-}
+    <div class="month-section">
+        <div class="month-header">
+            <h2>June 2025</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Date</th>
+                    <th>Team</th>
+                    <th>Diamond</th>
+                    <th>Players</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Wed</td>
+                    <td>June 4</td>
+                    <td>Pine Riders</td>
+                    <td>2</td>
+                    <td>
+                        <div class="player-list" id="players-june-4"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('june-4', 'Pine Riders')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td>June 11</td>
+                    <td>BTG</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-june-11"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('june-11', 'BTG')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td>June 18</td>
+                    <td>Villians</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-june-18"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('june-18', 'Villians')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td>June 24</td>
+                    <td>BYE</td>
+                    <td>-</td>
+                    <td>
+                        <div class="player-list" id="players-june-24"></div>
+                    </td>
+                    <td><button class="sign-up-btn" disabled>No Game</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-function addSignup(gameId, playerName, position) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  
-  // Check if player is already signed up for this game
-  var playerExists = false;
-  var rowToUpdate = -1;
-  
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] == gameId && data[i][1] == playerName) {
-      playerExists = true;
-      rowToUpdate = i + 1; // +1 because sheet rows are 1-indexed
-      break;
-    }
-  }
-  
-  if (playerExists) {
-    // Update existing signup
-    sheet.getRange(rowToUpdate, 3).setValue(position); // Update position
-    sheet.getRange(rowToUpdate, 4).setValue(new Date()); // Update timestamp
-  } else {
-    // Add new signup
-    sheet.appendRow([gameId, playerName, position, new Date()]);
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({
-    'success': true,
-    'message': playerExists ? 'Signup updated' : 'Signup added'
-  })).setMimeType(ContentService.MimeType.JSON);
-}
+    <div class="month-section">
+        <div class="month-header">
+            <h2>July 2025</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Date</th>
+                    <th>Team</th>
+                    <th>Diamond</th>
+                    <th>Players</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tue</td>
+                    <td>July 1</td>
+                    <td>Lock Monsters</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-july-1"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('july-1', 'Lock Monsters')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td>July 8</td>
+                    <td>Board X</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-july-8"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('july-8', 'Board X')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Tue</td>
+                    <td>July 15</td>
+                    <td>Sparx</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-july-15"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('july-15', 'Sparx')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td>July 23</td>
+                    <td>Pine Riders</td>
+                    <td>2</td>
+                    <td>
+                        <div class="player-list" id="players-july-23"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('july-23', 'Pine Riders')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td>July 30</td>
+                    <td>BTG</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-july-30"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('july-30', 'BTG')">Sign Up</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-function removeSignup(gameId, playerName) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  
-  // Find player signup
-  var rowToDelete = -1;
-  
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] == gameId && data[i][1] == playerName) {
-      rowToDelete = i + 1; // +1 because sheet rows are 1-indexed
-      break;
-    }
-  }
-  
-  if (rowToDelete > 0) {
-    // Delete signup
-    sheet.deleteRow(rowToDelete);
-    return ContentService.createTextOutput(JSON.stringify({
-      'success': true,
-      'message': 'Signup removed'
-    })).setMimeType(ContentService.MimeType.JSON);
-  } else {
-    return ContentService.createTextOutput(JSON.stringify({
-      'success': false,
-      'message': 'Signup not found'
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
+    <div class="month-section">
+        <div class="month-header">
+            <h2>August 2025</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Date</th>
+                    <th>Team</th>
+                    <th>Diamond</th>
+                    <th>Players</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Wed</td>
+                    <td>August 6</td>
+                    <td>Villians</td>
+                    <td>1</td>
+                    <td>
+                        <div class="player-list" id="players-august-6"></div>
+                    </td>
+                    <td><button class="sign-up-btn" onclick="openSignup('august-6', 'Villians')">Sign Up</button></td>
+                </tr>
+                <tr>
+                    <td>Wed</td>
+                    <td>August 13</td>
+                    <td>BYE</td>
+                    <td>-</td>
+                    <td>
+                        <div class="player-list" id="players-august-13"></div>
+                    </td>
+                    <td><button class="sign-up-btn" disabled>No Game</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signup-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSignup()">&times;</span>
+            <h3>Sign Up for Game</h3>
+            <p id="game-details">Game details here</p>
+            <form id="signup-form">
+                <input type="hidden" id="game-id" name="game-id">
+                <label for="player-name">Name:</label>
+                <input type="text" id="player-name" name="player-name" placeholder="Your name" required>
+                
+                <label for="player-position">Position:</label>
+                <select id="player-position" name="player-position">
+                    <option value="Pitcher">Pitcher</option>
+                    <option value="Catcher">Catcher</option>
+                    <option value="First Base">First Base</option>
+                    <option value="Second Base">Second Base</option>
+                    <option value="Third Base">Third Base</option>
+                    <option value="Shortstop">Shortstop</option>
+                    <option value="Left Field">Left Field</option>
+                    <option value="Center Field">Center Field</option>
+                    <option value="Right Field">Right Field</option>
+                    <option value="Utility">Utility</option>
+                </select>
+
+                <button type="button" class="submit-btn" onclick="submitSignup()">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ===== IMPORTANT: REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL =====
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec';
+        
+        // ===== END OF CONFIGURATION =====
+        
+        let currentGameId = '';
+        let currentPlayerName = '';
+        
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'block';
+        }
+        
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+        
+        // Show status message
+        function showStatus(message, isSuccess) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.textContent = message;
+            statusEl.className = 'status-message ' + (isSuccess ? 'status-success' : 'status-error');
+            statusEl.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Load all signups from Google Sheets
+        function loadSignups() {
+            showLoading();
+            
+            fetch(`${SCRIPT_URL}?operation=getSignups`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populatePlayerLists(data.data);
+                        hideLoading();
+                    } else {
+                        throw new Error(data.message || 'Failed to load signups');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showStatus(`Error: ${error.message}`, false);
+                    console.error('Error loading signups:', error);
+                });
+        }
+        
+        // Populate player lists with data from Google Sheets
+        function populatePlayerLists(playerData) {
+            // Clear existing player lists
+            const playerLists = document.querySelectorAll('.player-list');
+            playerLists.forEach(list => {
+                list.innerHTML = '';
+            });
+            
+            // Populate with new data
+            for (const gameId in playerData) {
+                const playerList = document.getElementById(`players-${gameId}`);
+                if (playerList) {
+                    // Show player count
+                    const countEl = document.createElement('div');
+                    countEl.className = 'player-count';
+                    countEl.textContent = `Players: ${playerData[gameId].length}`;
+                    playerList.appendChild(countEl);
+                    
+                    // Add each player
+                    playerData[gameId].forEach(player => {
+                        const playerEl = document.createElement('div');
+                        playerEl.className = 'player';
+                        
+                        const nameEl = document.createElement('span');
+                        nameEl.textContent = `${player.name} (${player.position})`;
+                        playerEl.appendChild(nameEl);
+                        
+                        // Add remove button
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.textContent = 'X';
+                        removeBtn.onclick = () => removeSignup(gameId, player.name);
+                        playerEl.appendChild(removeBtn);
+                        
+                        playerList.appendChild(playerEl);
+                    });
+                }
+            }
+        }
+        
+        // Open signup modal
+        function openSignup(gameId, opponent) {
+            document.getElementById('signup-modal').style.display = 'block';
+            document.getElementById('game-details').textContent = `vs ${opponent}`;
+            document.getElementById('game-id').value = gameId;
+            currentGameId = gameId;
+            
+            // Focus on name field
+            setTimeout(() => {
+                document.getElementById('player-name').focus();
+            }, 100);
+        }
+        
+        // Close signup modal
+        function closeSignup() {
+            document.getElementById('signup-modal').style.display = 'none';
+            document.getElementById('signup-form').reset();
+        }
+        
+        // Submit signup to Google Sheets
+        function submitSignup() {
+            const playerName = document.getElementById('player-name').value;
+            const playerPosition = document.getElementById('player-position').value;
+            const gameId = document.getElementById('game-id').value;
+            
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            currentPlayerName = playerName;
+            
+            showLoading();
+            closeSignup();
+            
+            // Send data to Google Apps Script
+            fetch(`${SCRIPT_URL}?operation=addSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}&position=${encodeURIComponent(playerPosition)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadSignups(); // Reload all signups
+                        showStatus('Successfully signed up!', true);
+                    } else {
+                        throw new Error(data.message || 'Failed to sign up');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showStatus(`Error: ${error.message}`, false);
+                    console.error('Error submitting signup:', error);
+                });
+        }
+        
+        // Remove signup
+        function removeSignup(gameId, playerName) {
+            if (confirm(`Remove ${playerName} from this game?`)) {
+                showLoading();
+                
+                fetch(`${SCRIPT_URL}?operation=removeSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadSignups(); // Reload all signups
+                            showStatus('Successfully removed signup', true);
+                        } else {
+                            throw new Error(data.message || 'Failed to remove signup');
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showStatus(`Error: ${error.message}`, false);
+                        console.error('Error removing signup:', error);
+                    });
+            }
+        }
+        
+        // Initialize - load signups when page loads
+        document.addEventListener('DOMContentLoaded', loadSignups);
+    </script>
+</body>
+</html>
