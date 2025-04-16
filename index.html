@@ -787,6 +787,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        console.log("Data received from Google Sheets:", data);
                         populatePlayerLists(data.data);
                         hideLoading();
                     } else {
@@ -805,6 +806,9 @@
             // Group players by gameId and attendance status
             const groupedPlayers = {};
             
+            // Log the raw data for debugging
+            console.log("Raw player data:", playerData);
+            
             for (const gameId in playerData) {
                 groupedPlayers[gameId] = {
                     attending: [],
@@ -812,13 +816,22 @@
                 };
                 
                 playerData[gameId].forEach(player => {
-                    if (player.attendance === "false") {
-                        groupedPlayers[gameId].notAttending.push(player);
-                    } else {
+                    // Log each player's attendance value
+                    console.log(`Player ${player.name} attendance: ${player.attendance}`);
+                    
+                    // More robust attendance check
+                    const isAttending = player.attendance !== "false";
+                    
+                    if (isAttending) {
                         groupedPlayers[gameId].attending.push(player);
+                    } else {
+                        groupedPlayers[gameId].notAttending.push(player);
                     }
                 });
             }
+            
+            // Log the grouped data for debugging
+            console.log("Grouped player data:", groupedPlayers);
             
             // Update the DOM with grouped players
             for (const gameId in groupedPlayers) {
@@ -830,14 +843,29 @@
                     const attendingCount = groupedPlayers[gameId].attending.length;
                     const notAttendingCount = groupedPlayers[gameId].notAttending.length;
                     
+                    console.log(`Game ${gameId}: ${attendingCount} attending, ${notAttendingCount} not attending`);
+                    
                     // Update the attendance tally at the top
                     const tallyEl = document.getElementById(`tally-${gameId}`);
                     if (tallyEl) {
                         const attendingNumberEl = tallyEl.querySelector('.tally-attending');
                         const notAttendingNumberEl = tallyEl.querySelector('.tally-not-attending');
                         
-                        if (attendingNumberEl) attendingNumberEl.textContent = attendingCount;
-                        if (notAttendingNumberEl) notAttendingNumberEl.textContent = notAttendingCount;
+                        if (attendingNumberEl) {
+                            console.log(`Setting attending count for ${gameId} to ${attendingCount}`);
+                            attendingNumberEl.textContent = attendingCount;
+                        } else {
+                            console.error(`Could not find .tally-attending element for ${gameId}`);
+                        }
+                        
+                        if (notAttendingNumberEl) {
+                            console.log(`Setting not attending count for ${gameId} to ${notAttendingCount}`);
+                            notAttendingNumberEl.textContent = notAttendingCount;
+                        } else {
+                            console.error(`Could not find .tally-not-attending element for ${gameId}`);
+                        }
+                    } else {
+                        console.error(`Could not find tally-${gameId} element`);
                     }
                     
                     // Add attending players
