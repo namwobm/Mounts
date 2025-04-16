@@ -58,6 +58,36 @@
             background-color: #f2f2f2;
         }
 
+        /* Attendance Tally */
+        .attendance-tally {
+            display: flex;
+            margin-bottom: 8px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        .tally-attending {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .tally-not-attending {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .tally-label {
+            padding: 5px 10px;
+            text-align: center;
+            flex-grow: 1;
+            font-size: 14px;
+        }
+
         /* Mobile optimization */
         @media (max-width: 768px) {
             .desktop-only {
@@ -237,40 +267,6 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .attendance-options {
-            display: flex;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .attendance-option {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .attendance-option.selected {
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-        .attendance-yes {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #2e7d32;
-        }
-        .attendance-yes.selected {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .attendance-no {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #c62828;
-        }
-        .attendance-no.selected {
-            background-color: #f44336;
-            color: white;
-        }
         .submit-btn {
             width: 100%;
             background-color: #1a3a6e;
@@ -399,6 +395,12 @@
                     <td>Lock Monsters</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-may-13">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-may-13"></div>
                     </td>
                     <td>
@@ -411,15 +413,21 @@
                 <tr>
                     <td>Tue</td>
                     <td>May 20</td>
-                    <td>Board X</td>
+                    <td>Brand X</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-may-20">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-may-20"></div>
                     </td>
                     <td>
                         <div class="btn-group">
-                            <button class="sign-up-btn" onclick="openSignup('may-20', 'Board X', true)">Attending</button>
-                            <button class="cant-attend-btn" onclick="openSignup('may-20', 'Board X', false)">Can't Attend</button>
+                            <button class="sign-up-btn" onclick="openSignup('may-20', 'Brand X', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('may-20', 'Brand X', false)">Can't Attend</button>
                         </div>
                     </td>
                 </tr>
@@ -429,6 +437,12 @@
                     <td>Sparx</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-may-27">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-may-27"></div>
                     </td>
                     <td>
@@ -464,6 +478,12 @@
                     <td>Pine Riders</td>
                     <td>2</td>
                     <td>
+                        <div class="attendance-tally" id="tally-june-4">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-june-4"></div>
                     </td>
                     <td>
@@ -479,6 +499,12 @@
                     <td>BTG</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-june-11">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-june-11"></div>
                     </td>
                     <td>
@@ -494,6 +520,12 @@
                     <td>Villians</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-june-18">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-june-18"></div>
                     </td>
                     <td>
@@ -539,6 +571,12 @@
                     <td>Lock Monsters</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-july-1">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-july-1"></div>
                     </td>
                     <td>
@@ -551,15 +589,21 @@
                 <tr>
                     <td>Tue</td>
                     <td>July 8</td>
-                    <td>Board X</td>
+                    <td>Brand X</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-july-8">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-july-8"></div>
                     </td>
                     <td>
                         <div class="btn-group">
-                            <button class="sign-up-btn" onclick="openSignup('july-8', 'Board X', true)">Attending</button>
-                            <button class="cant-attend-btn" onclick="openSignup('july-8', 'Board X', false)">Can't Attend</button>
+                            <button class="sign-up-btn" onclick="openSignup('july-8', 'Brand X', true)">Attending</button>
+                            <button class="cant-attend-btn" onclick="openSignup('july-8', 'Brand X', false)">Can't Attend</button>
                         </div>
                     </td>
                 </tr>
@@ -569,6 +613,12 @@
                     <td>Sparx</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-july-15">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-july-15"></div>
                     </td>
                     <td>
@@ -584,6 +634,12 @@
                     <td>Pine Riders</td>
                     <td>2</td>
                     <td>
+                        <div class="attendance-tally" id="tally-july-23">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-july-23"></div>
                     </td>
                     <td>
@@ -599,6 +655,12 @@
                     <td>BTG</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-july-30">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-july-30"></div>
                     </td>
                     <td>
@@ -634,6 +696,12 @@
                     <td>Villians</td>
                     <td>1</td>
                     <td>
+                        <div class="attendance-tally" id="tally-august-6">
+                            <div class="tally-attending">0</div>
+                            <div class="tally-label">attending</div>
+                            <div class="tally-not-attending">0</div>
+                            <div class="tally-label">not</div>
+                        </div>
                         <div class="player-list-section" id="player-section-august-6"></div>
                     </td>
                     <td>
@@ -671,21 +739,7 @@
                 <label for="player-name">Name:</label>
                 <input type="text" id="player-name" name="player-name" placeholder="Your name" required>
                 
-                <div id="position-section">
-                    <label for="player-position">Position:</label>
-                    <select id="player-position" name="player-position">
-                        <option value="Pitcher">Pitcher</option>
-                        <option value="Catcher">Catcher</option>
-                        <option value="First Base">First Base</option>
-                        <option value="Second Base">Second Base</option>
-                        <option value="Third Base">Third Base</option>
-                        <option value="Shortstop">Shortstop</option>
-                        <option value="Left Field">Left Field</option>
-                        <option value="Center Field">Center Field</option>
-                        <option value="Right Field">Right Field</option>
-                        <option value="Utility">Utility</option>
-                    </select>
-                </div>
+                <!-- Position option removed -->
 
                 <button type="button" class="submit-btn" onclick="submitSignup()">Submit</button>
             </form>
@@ -694,7 +748,7 @@
 
     <script>
         // ===== IMPORTANT: REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT WEB APP URL =====
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhH_cZKZQq71KwaKzn688ziNcU_GVv1IPrAnTj8iOGgw1WeAWvZZzHpo7P3BsYU3xXeA/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEl6UY1fqa2wPN1T0J-pilJrog0EVWmuUc0E5cAxr4K2T845409GK35li8EFly7w-TTA/exec';
         
         // ===== END OF CONFIGURATION =====
         
@@ -776,10 +830,15 @@
                     const attendingCount = groupedPlayers[gameId].attending.length;
                     const notAttendingCount = groupedPlayers[gameId].notAttending.length;
                     
-                    const countEl = document.createElement('div');
-                    countEl.className = 'player-count';
-                    countEl.textContent = `${attendingCount} attending, ${notAttendingCount} not attending`;
-                    sectionEl.appendChild(countEl);
+                    // Update the attendance tally at the top
+                    const tallyEl = document.getElementById(`tally-${gameId}`);
+                    if (tallyEl) {
+                        const attendingNumberEl = tallyEl.querySelector('.tally-attending');
+                        const notAttendingNumberEl = tallyEl.querySelector('.tally-not-attending');
+                        
+                        if (attendingNumberEl) attendingNumberEl.textContent = attendingCount;
+                        if (notAttendingNumberEl) notAttendingNumberEl.textContent = notAttendingCount;
+                    }
                     
                     // Add attending players
                     if (attendingCount > 0) {
@@ -796,7 +855,7 @@
                             playerEl.className = 'player player-attending';
                             
                             const nameEl = document.createElement('span');
-                            nameEl.textContent = `${player.name} (${player.position})`;
+                            nameEl.textContent = player.name;
                             playerEl.appendChild(nameEl);
                             
                             // Add remove button
@@ -823,4 +882,118 @@
                         notAttendingList.className = 'player-list';
                         
                         groupedPlayers[gameId].notAttending.forEach(player => {
-                            const playerEl = document.createElement('
+                            const playerEl = document.createElement('div');
+                            playerEl.className = 'player player-not-attending';
+                            
+                            const nameEl = document.createElement('span');
+                            nameEl.textContent = player.name;
+                            playerEl.appendChild(nameEl);
+                            
+                            // Add remove button
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-btn';
+                            removeBtn.textContent = 'X';
+                            removeBtn.onclick = () => removeSignup(gameId, player.name);
+                            playerEl.appendChild(removeBtn);
+                            
+                            notAttendingList.appendChild(playerEl);
+                        });
+                        
+                        sectionEl.appendChild(notAttendingList);
+                    }
+                }
+            }
+        }
+        
+        // Open signup modal
+        function openSignup(gameId, opponent, isAttending) {
+            document.getElementById('signup-modal').style.display = 'block';
+            document.getElementById('game-details').textContent = `vs ${opponent}`;
+            document.getElementById('game-id').value = gameId;
+            document.getElementById('attendance-status').value = isAttending;
+            
+            // Update modal title based on attendance choice
+            if (isAttending) {
+                document.getElementById('signup-modal-title').textContent = 'Sign Up for Game';
+            } else {
+                document.getElementById('signup-modal-title').textContent = 'Mark as Not Attending';
+            }
+            
+            currentGameId = gameId;
+            currentAttendance = isAttending;
+            
+            // Focus on name field
+            setTimeout(() => {
+                document.getElementById('player-name').focus();
+            }, 100);
+        }
+        
+        // Close signup modal
+        function closeSignup() {
+            document.getElementById('signup-modal').style.display = 'none';
+            document.getElementById('signup-form').reset();
+        }
+        
+        // Submit signup to Google Sheets
+        function submitSignup() {
+            const playerName = document.getElementById('player-name').value;
+            const gameId = document.getElementById('game-id').value;
+            const attendance = document.getElementById('attendance-status').value;
+            
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            currentPlayerName = playerName;
+            
+            showLoading();
+            closeSignup();
+            
+            // Send data to Google Apps Script - using "N/A" for position since we removed that field
+            fetch(`${SCRIPT_URL}?operation=addSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}&position=N/A&attendance=${attendance}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadSignups(); // Reload all signups
+                        const message = attendance === 'true' ? 'Successfully signed up!' : 'Marked as not attending';
+                        showStatus(message, true);
+                    } else {
+                        throw new Error(data.message || 'Failed to sign up');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showStatus(`Error: ${error.message}`, false);
+                    console.error('Error submitting signup:', error);
+                });
+        }
+        
+        // Remove signup
+        function removeSignup(gameId, playerName) {
+            if (confirm(`Remove ${playerName} from this game?`)) {
+                showLoading();
+                
+                fetch(`${SCRIPT_URL}?operation=removeSignup&gameId=${encodeURIComponent(gameId)}&playerName=${encodeURIComponent(playerName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadSignups(); // Reload all signups
+                            showStatus('Successfully removed signup', true);
+                        } else {
+                            throw new Error(data.message || 'Failed to remove signup');
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showStatus(`Error: ${error.message}`, false);
+                        console.error('Error removing signup:', error);
+                    });
+            }
+        }
+        
+        // Initialize - load signups when page loads
+        document.addEventListener('DOMContentLoaded', loadSignups);
+    </script>
+</body>
+</html>
